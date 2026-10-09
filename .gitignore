@@ -1,0 +1,15 @@
+# Objects, libraries, executables
+*.o
+*.a
+*.so
+*.exe
+*.out
+new_ls
+core
+core.*
+# Editor/system clutter
+.DS_Store
+Thumbs.db
+.vscode/
+*.swp
+*~
