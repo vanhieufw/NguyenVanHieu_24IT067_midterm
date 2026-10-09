@@ -1,6 +1,7 @@
+````markdown
 <div align="center">
 
-# 🗃️ new_ls
+# 🗃️ new_lss
 
 **A modular UNIX file-listing utility in C**
 
@@ -10,13 +11,13 @@
 
 ## Overview
 
-`new_ls` is a from-scratch, educational implementation of the subset of the NetBSD `ls(1)` manual distributed for the UNIX systems programming midterm. It never launches the system `ls` to produce its output. Source code is separated into six implementation modules and a shared interface.
+`new_ls` là một phiên bản tự phát triển từ đầu nhằm mục đích học tập, mô phỏng lại một phần tập lệnh trong sổ tay NetBSD `ls(1)` được phân phối cho bài thi giữa kỳ môn Lập trình Hệ thống UNIX. Chương trình không bao giờ gọi lệnh `ls` của hệ thống để tạo đầu ra. Mã nguồn được chia thành 6 mô-đun xử lý riêng biệt cùng một giao diện dùng chung (`include/new_ls.h`).
 
 ## Requirements
 
-- NetBSD with development tools (`cc`, `make`), or another compatible POSIX environment.
-- No third-party runtime libraries are required.
-- Optional Git to clone the repository.
+- NetBSD cùng các công cụ phát triển (`cc`, `make`), hoặc một môi trường POSIX tương thích khác.
+- Không yêu cầu thư viện runtime bên thứ ba nào.
+- Git (tùy chọn) để clone repository.
 
 ## Build and test
 
@@ -25,10 +26,11 @@ make
 make test
 ./new_ls -la
 ```
+````
 
 ## Optional installation (run without `./`)
 
-Run `make install` with sufficient permissions; the default location is `/usr/local/bin/new_ls`.
+Chạy `make install` với đủ quyền hạn; vị trí mặc định là `/usr/local/bin/new_ls`.
 
 ```sh
 make
@@ -36,29 +38,31 @@ su
 make install
 exit
 new_ls -la
+
 ```
 
-If `new_ls: not found`, verify `/usr/local/bin` is on `PATH`. For Bash, run `export PATH="/usr/local/bin:$PATH"` in the current shell. To install without root into a personal prefix, run `make PREFIX="$HOME/.local" install` and put `$HOME/.local/bin` on `PATH`.
+Nếu gặp lỗi `new_ls: not found`, hãy kiểm tra `/usr/local/bin` đã có trong `PATH` chưa. Đối với Bash, chạy `export PATH="/usr/local/bin:$PATH"` trong shell hiện tại. Để cài đặt không cần quyền root vào prefix cá nhân, chạy `make PREFIX="$HOME/.local" install` và thêm `$HOME/.local/bin` vào `PATH`.
 
-To remove the installed binary, use `make uninstall` with the same permissions and prefix. **The system `/bin/ls` is never overwritten.**
+Để gỡ bỏ file binary đã cài đặt, sử dụng `make uninstall` với cùng quyền hạn và prefix. **File `/bin/ls` của hệ thống sẽ không bao giờ bị ghi đè.**
 
 ## Usage
 
 ```text
 new_ls [-AacdFfhiklnqRrSstuw] [file ...]
+
 ```
 
-| Option | Behavior |
-|---|---|
-| `-a`, `-A` | Show dotfiles; `-A` excludes `.` and `..` |
-| `-c`, `-u` | Select status-change or access time |
-| `-d`, `-R` | List directories themselves or recurse |
-| `-F` | Append type indicators |
-| `-f`, `-r`, `-S`, `-t` | Unsorted, reverse, size or time order |
-| `-h`, `-k`, `-s` | Human sizes, 1-KiB block units, blocks |
-| `-i` | Show inode number |
-| `-l`, `-n` | Long listing, numeric users/groups |
-| `-q`, `-w` | Replace nonprintable characters or print names raw |
+| Option                 | Behavior                                                           |
+| ---------------------- | ------------------------------------------------------------------ |
+| `-a`, `-A`             | Hiển thị dotfiles; `-A` loại trừ `.` và `..`                       |
+| `-c`, `-u`             | Chọn thời gian status-change hoặc thời gian truy cập (access time) |
+| `-d`, `-R`             | Liệt kê bản thân các thư mục hoặc duyệt đệ quy (recurse)           |
+| `-F`                   | Thêm các ký hiệu chỉ thị kiểu file (type indicators)               |
+| `-f`, `-r`, `-S`, `-t` | Không sắp xếp, đảo ngược, sắp xếp theo size hoặc time              |
+| `-h`, `-k`, `-s`       | Dung lượng dễ đọc (human sizes), đơn vị block 1-KiB, số block      |
+| `-i`                   | Hiển thị số inode                                                  |
+| `-l`, `-n`             | Liệt kê chi tiết (long listing), hiển thị user/group dạng số       |
+| `-q`, `-w`             | Thay thế các ký tự không in được hoặc in tên dạng thô (raw)        |
 
 Examples:
 
@@ -68,24 +72,29 @@ Examples:
 ./new_ls -R .
 ./new_ls -St /tmp
 ./new_ls -- -filename
+
 ```
 
 ## Design
 
-| Module | Responsibility |
-|---|---|
-| `cli_parser.c` | `getopt` parsing and option precedence |
-| `file_utils.c` | Path joins and memory-safe dynamic catalog |
-| `scanner.c` | Directory reads, operands, recursive traversal |
-| `ordering.c` | Sorting by filename, size, selected timestamp |
-| `formatter.c` | Long format, permissions, blocks, name escaping |
-| `main.c` | Top-level control and exit status |
-| `include/new_ls.h` | Shared models and interfaces |
+| Module             | Responsibility                                                            |
+| ------------------ | ------------------------------------------------------------------------- |
+| `cli_parser.c`     | Phân tích cú pháp `getopt` và xử lý độ ưu tiên của các option             |
+| `file_utils.c`     | Nối đường dẫn (path joins) và quản lý danh mục động an toàn bộ nhớ        |
+| `scanner.c`        | Đọc thư mục, xử lý các operand, duyệt đệ quy                              |
+| `ordering.c`       | Sắp xếp theo filename, size, hoặc timestamp đã chọn                       |
+| `formatter.c`      | Long format, quyền hạn (permissions), blocks, mã hóa/thoát ký tự tên file |
+| `main.c`           | Điều khiển luồng cấp cao nhất và trả về exit status                       |
+| `include/new_ls.h` | Các model và interface dùng chung                                         |
 
-Important system calls/APIs: `opendir`, `readdir`, `closedir`, `lstat`, `stat`, `readlink`, `getpwuid`, `getgrgid`, `localtime_r`, `strftime`.
+Các system call/API quan trọng: `opendir`, `readdir`, `closedir`, `lstat`, `stat`, `readlink`, `getpwuid`, `getgrgid`, `localtime_r`, `strftime`.
 
 ## Validation and limitations
 
-Run `make test`, then compare with the **NetBSD** implementation using identical paths. The program prints one entry per line, in keeping with the provided abbreviated manual; interactive column layout is intentionally not implemented. Exact spacing, block-size environment conventions, locale/multibyte rules, and whiteout handling can differ from NetBSD's production `ls`. The smoke-test suite is not a substitute for comprehensive cross-platform verification.
+Chạy `make test`, sau đó so sánh với bản cài đặt của **NetBSD** bằng cách sử dụng các đường dẫn giống hệt nhau. Chương trình in một mục trên mỗi dòng, phù hợp với sổ tay thu gọn được cung cấp; bố cục cột tương tác (interactive column layout) cố tình không được cài đặt. Khoảng cách chính xác, các quy ước biến môi trường block-size, quy tắc locale/multibyte, và xử lý whiteout có thể khác biệt so với `ls` chính thức của NetBSD. Bộ smoke-test không thể thay thế cho việc kiểm thử toàn diện trên nhiều nền tảng.
 
-When publishing this as coursework, the student should run the tests in their own NetBSD VM, understand the implementation, and document their own observations and contributions.
+Khi xuất bản nội dung này dưới dạng bài tập môn học, sinh viên nên tự chạy các bài test trong VM NetBSD của riêng mình, hiểu rõ bản cài đặt, và ghi lại các quan sát cũng như đóng góp cá nhân.
+
+```
+
+```
