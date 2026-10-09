@@ -1,4 +1,4 @@
-# new_ls
+git# new_ls
 
 ### UNIX File Listing Utility · System Programming Midterm
 
@@ -117,7 +117,7 @@ Nếu `cc` không được tìm thấy, cần cài bộ công cụ phát triển
 ## Cấu trúc dự án
 
 ```text
-new_ls/
+NguyenVanHieu_24IT067_midterm/
 ├── include/
 │   └── new_ls.h           # Khai báo cấu trúc dữ liệu và API chung
 ├── src/
@@ -214,12 +214,12 @@ Nhấn **Login**. Lần đầu kết nối, kiểm tra fingerprint máy chủ tr
 ### Chuyển dự án vào máy ảo
 
 1. Giải nén file ZIP của dự án trên Windows (hoặc clone từ GitHub).
-2. Trong VS Code, mở thư mục `new_ls` để xem hoặc chỉnh sửa code.
+2. Trong VS Code, mở thư mục `NguyenVanHieu_24IT067_midterm` để xem hoặc chỉnh sửa code.
 3. Mở WinSCP, duyệt tới thư mục home của tài khoản NetBSD (`~`).
-4. Kéo **cả thư mục `new_ls`** từ Windows sang NetBSD.
-5. Kiểm tra NetBSD có file `~/new_ls/Makefile` và `~/new_ls/src/main.c`.
+4. Kéo **cả thư mục `NguyenVanHieu_24IT067_midterm`** từ Windows sang NetBSD.
+5. Kiểm tra NetBSD có file `~/NguyenVanHieu_24IT067_midterm/Makefile` và `~/NguyenVanHieu_24IT067_midterm/src/main.c`.
 
-> **Tránh lỗi thư mục lồng nhau:** Đường dẫn đúng phải là `~/new_ls/Makefile`, không phải `~/new_ls/new_ls/Makefile`. Không nên chuyển riêng từng file `.c` mà bỏ quên `include/`, `Makefile` hay `tests/`.
+> **Tránh lỗi thư mục lồng nhau:** Đường dẫn đúng phải là `~/NguyenVanHieu_24IT067_midterm/Makefile`, không phải `~/NguyenVanHieu_24IT067_midterm/NguyenVanHieu_24IT067_midterm/Makefile`. Không nên chuyển riêng từng file `.c` mà bỏ quên `include/`, `Makefile` hay `tests/`.
 
 ---
 
@@ -228,7 +228,7 @@ Nhấn **Login**. Lần đầu kết nối, kiểm tra fingerprint máy chủ tr
 Tại Terminal NetBSD, đăng nhập bằng tài khoản đã nhận source và chạy:
 
 ```sh
-cd ~/new_ls
+cd ~/NguyenVanHieu_24IT067_midterm
 make
 ```
 
@@ -272,7 +272,7 @@ Không cần sử dụng `gcc` riêng lẻ vì Makefile đã quản lý việc b
 **Bước 1.** Vào thư mục dự án và kiểm thử:
 
 ```sh
-cd ~/new_ls
+cd ~/NguyenVanHieu_24IT067_midterm
 make
 make test
 ```
@@ -285,7 +285,7 @@ Nếu thấy dòng `PASS: new_ls smoke tests` thì chương trình đã sẵn s�
 su
 ```
 
-**Bước 3.** Cài đặt (vẫn đang ở thư mục `~/new_ls`):
+**Bước 3.** Cài đặt (vẫn đang ở thư mục `~/NguyenVanHieu_24IT067_midterm`):
 
 ```sh
 make install
@@ -320,7 +320,7 @@ new_ls -R /tmp
 Phù hợp khi không có mật khẩu root hoặc không muốn cài toàn hệ thống.
 
 ```sh
-cd ~/new_ls
+cd ~/NguyenVanHieu_24IT067_midterm
 make PREFIX=$HOME/.local install
 export PATH="$HOME/.local/bin:$PATH"
 ```
@@ -374,7 +374,7 @@ rehash
 Sau khi sửa code, biên dịch và kiểm thử lại, rồi cài lại phiên bản mới:
 
 ```sh
-cd ~/new_ls
+cd ~/NguyenVanHieu_24IT067_midterm
 make
 make test
 su
@@ -385,7 +385,7 @@ exit
 Nếu không muốn dùng lệnh `new_ls` đã cài nữa:
 
 ```sh
-cd ~/new_ls
+cd ~/NguyenVanHieu_24IT067_midterm
 su
 make uninstall
 exit
@@ -397,7 +397,7 @@ Lệnh gỡ cài đặt chỉ xóa `/usr/local/bin/new_ls`, **không xóa source
 
 ## Hướng dẫn sử dụng
 
-Các ví dụ dưới đây dùng `./new_ls` để có thể chạy ngay sau khi `make` trong thư mục `~/new_ls`. Nếu đã thực hiện phần **cài đặt tùy chọn** và `PATH` được cấu hình đúng, bạn có thể thay `./new_ls` bằng `new_ls` ở tất cả ví dụ.
+Các ví dụ dưới đây dùng `./new_ls` để có thể chạy ngay sau khi `make` trong thư mục `~/NguyenVanHieu_24IT067_midterm`. Nếu đã thực hiện phần **cài đặt tùy chọn** và `PATH` được cấu hình đúng, bạn có thể thay `./new_ls` bằng `new_ls` ở tất cả ví dụ.
 
 ### Liệt kê thư mục hiện tại
 
@@ -482,7 +482,7 @@ Cẩn thận với `-R` trên thư mục rất lớn, vì lượng kết quả c
 ### Kiểm thử tự động
 
 ```sh
-cd ~/new_ls
+cd ~/NguyenVanHieu_24IT067_midterm
 make test
 ```
 
@@ -550,7 +550,7 @@ Mỗi lần thay đổi mã nguồn:
 
 1. **Windows / VS Code:** sửa các file `.c`, `.h` và nhấn **Ctrl + S**.
 2. **WinSCP:** tải lên NetBSD **những file đã thay đổi**; chọn ghi đè file cũ khi cần.
-3. **NetBSD:** chạy `cd ~/new_ls && make`.
+3. **NetBSD:** chạy `cd ~/NguyenVanHieu_24IT067_midterm && make`.
 4. **NetBSD:** chạy `make test` và kiểm tra thêm lệnh `./new_ls` liên quan tới phần vừa sửa.
 5. **Nếu có lỗi:** đọc thông báo trình biên dịch hoặc kết quả test, sửa trên VS Code rồi đồng bộ lại.
 
@@ -578,12 +578,12 @@ Không commit file nhị phân (`new_ls`), file object (`.o`) hoặc file tạm.
 | `make: not found` | Thiếu công cụ phát triển hoặc PATH | Kiểm tra `command -v make` và bộ cài NetBSD. |
 | `cc: not found` | Thiếu trình biên dịch | Kiểm tra `command -v cc`, cài bộ công cụ phát triển phù hợp. |
 | `don't know how to make ...` | Sai thư mục hoặc mục tiêu Makefile | Chạy `pwd`, `ls -l Makefile`, kiểm tra tên target. |
-| `./new_ls: not found` | Chưa biên dịch hoặc đứng sai thư mục | Vào `~/new_ls`, chạy `make`, kiểm tra `ls -l new_ls`. |
+| `./new_ls: not found` | Chưa biên dịch hoặc đứng sai thư mục | Vào `~/NguyenVanHieu_24IT067_midterm`, chạy `make`, kiểm tra `ls -l new_ls`. |
 | `Permission denied` khi liệt kê | Không có quyền đọc đường dẫn hoặc chạy file | Kiểm tra quyền tập tin bằng `ls -l`; không tự ý dùng root để đọc dữ liệu. |
 | `make install` báo `mkdir: Permission denied` | Không có quyền ghi vào `/usr/local/bin` | Chuyển sang root bằng `su`, rồi chạy `make install` trong thư mục dự án. |
 | `new_ls: command not found` sau khi cài | `/usr/local/bin` không có trong `PATH` | Kiểm tra `command -v new_ls`; thêm `/usr/local/bin` vào `PATH` như hướng dẫn ở trên. |
 | `make test` thất bại | Lỗi hành vi hoặc khác biệt công cụ môi trường | Xem lỗi đầu tiên, đối chiếu bằng test đơn lẻ và `ls` gốc. |
-| Sửa code mà kết quả không đổi | Chưa tải file mới lên máy ảo | Kiểm tra WinSCP đã ghi đè đúng file trong `~/new_ls/src/`. |
+| Sửa code mà kết quả không đổi | Chưa tải file mới lên máy ảo | Kiểm tra WinSCP đã ghi đè đúng file trong `~/NguyenVanHieu_24IT067_midterm/src/`. |
 | Lỗi `undefined reference` khi link | Thiếu file `.c` trong Makefile | Kiểm tra danh sách `SOURCES` trong Makefile. |
 | Tên tháng hiện sai / ký tự lạ | Locale chưa được thiết lập | Chương trình đã gọi `setlocale(LC_ALL, "")`; kiểm tra biến `LANG` trên hệ thống. |
 
