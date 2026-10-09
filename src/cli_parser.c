@@ -35,6 +35,13 @@ int parse_cli(int argc, char **argv, Settings *cfg) {
     cfg->time_field = TIME_MTIME;
     cfg->name_mode = isatty(STDOUT_FILENO) ? NAME_QUESTION : NAME_RAW;
     cfg->block_unit = parse_blocksize();
+
+    /* Man page: -A is always set for the super-user. */
+#ifdef __NetBSD__
+    if (geteuid() == 0)
+        cfg->dots = 1;
+#endif
+
     int flag;
     opterr = 0;
     while ((flag = getopt(argc, argv, "AacdFfhiklnqRrSstuw")) != -1) {

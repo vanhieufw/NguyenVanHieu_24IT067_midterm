@@ -1,100 +1,160 @@
-````markdown
-<div align="center">
+# new_ls – Phiên bản đơn giản hóa của lệnh `ls(1)` trên NetBSD
 
-# 🗃️ new_lss
+**Sinh viên:** Nguyễn Văn Hiếu – 24IT067  
+**Môn học:** Lập trình Hệ thống UNIX – Bài tập giữa kỳ  
+**Nền tảng:** NetBSD (có thể biên dịch trên các hệ thống POSIX khác)
 
-**A modular UNIX file-listing utility in C**
+Đây là phiên bản tự phát triển từ đầu, mô phỏng một tập con các tính năng của lệnh `ls(1)` theo sổ tay NetBSD được cung cấp trong đề bài.
 
-![Language](https://img.shields.io/badge/C-C11-00599C?logo=c&logoColor=white) ![Target](https://img.shields.io/badge/Target-NetBSD-EAB92D) ![Build](https://img.shields.io/badge/Build-BSD%20make-blue) ![Options](https://img.shields.io/badge/Flags-19-brightgreen)
+---
 
-</div>
+## Các tính năng đã triển khai
 
-## Overview
+Hỗ trợ đầy đủ tất cả các tùy chọn trong phần SYNOPSIS của man page:
 
-`new_ls` là một phiên bản tự phát triển từ đầu nhằm mục đích học tập, mô phỏng lại một phần tập lệnh trong sổ tay NetBSD `ls(1)` được phân phối cho bài thi giữa kỳ môn Lập trình Hệ thống UNIX. Chương trình không bao giờ gọi lệnh `ls` của hệ thống để tạo đầu ra. Mã nguồn được chia thành 6 mô-đun xử lý riêng biệt cùng một giao diện dùng chung (`include/new_ls.h`).
+```
+new_ls [-AacdFfhiklnqRrSstuw] [file ...]
+```
 
-## Requirements
+| Tùy chọn | Hành vi |
+|----------|---------|
+| `-A`     | Liệt kê tất cả các mục trừ `.` và `..`. **Tự động bật cho super-user** (theo đúng man page). |
+| `-a`     | Hiển thị cả các mục có tên bắt đầu bằng dấu chấm (`.`). |
+| `-c`     | Sử dụng thời gian thay đổi trạng thái (ctime) khi sắp xếp (`-t`) hoặc in (`-l`). |
+| `-d`     | Chỉ liệt kê bản thân thư mục, không liệt kê nội dung. Ghi đè `-R`. |
+| `-F`     | Thêm ký hiệu phân loại: `/` directory, `*` executable, `@` symbolic link, `=` socket, `\|` FIFO, `%` whiteout. |
+| `-f`     | Không sắp xếp. |
+| `-h`     | Hiển thị kích thước human-readable (ghi đè `-k`). |
+| `-i`     | In số inode. |
+| `-k`     | Đếm block theo kilobyte (ghi đè `-h`). |
+| `-l`     | Long format listing. |
+| `-n`     | Long format với uid/gid dạng số. |
+| `-q`     | In ký tự không in được thành `?` (mặc định khi stdout là terminal). |
+| `-R`     | Liệt kê đệ quy các thư mục con. Ghi đè `-d`. |
+| `-r`     | Đảo ngược thứ tự sắp xếp. |
+| `-S`     | Sắp xếp theo size (lớn trước). |
+| `-s`     | Hiển thị số block được sử dụng. |
+| `-t`     | Sắp xếp theo time (mới nhất trước). |
+| `-u`     | Sử dụng thời gian truy cập (atime) khi sắp xếp (`-t`) hoặc in (`-l`). |
+| `-w`     | In thô các ký tự không in được (mặc định khi stdout không phải terminal). |
 
-- NetBSD cùng các công cụ phát triển (`cc`, `make`), hoặc một môi trường POSIX tương thích khác.
-- Không yêu cầu thư viện runtime bên thứ ba nào.
-- Git (tùy chọn) để clone repository.
+### Các hành vi bổ sung theo man page
 
-## Build and test
+- Các operand file và directory được tách riêng; file không phải directory được liệt kê trước.
+- Symbolic link được đưa vào dòng lệnh sẽ được follow chỉ khi nó trỏ tới directory và không dùng `-d`.
+- Long format hiển thị: mode, số link, owner, group, size (hoặc major/minor với device), timestamp, tên file, và `-> target` với symbolic link.
+- Số block tuân theo biến môi trường `BLOCKSIZE` (mặc định 512).
+- Sticky bit, set-user-ID và set-group-ID được hiển thị đúng (`t`/`T`, `s`/`S`).
+- Hỗ trợ whiteout trên NetBSD (kiểu `w` và ký hiệu `%`).
+- Exit status: 0 nếu thành công, >0 nếu có lỗi.
+
+---
+
+## Cấu trúc dự án
+
+```
+.
+├── Makefile
+├── README.md                 ← báo cáo này
+├── .gitignore
+├── include/
+│   └── new_ls.h              ← kiểu dữ liệu và khai báo dùng chung
+├── src/
+│   ├── main.c                ← điểm vào chương trình
+│   ├── cli_parser.c          ← phân tích option + BLOCKSIZE
+│   ├── file_utils.c          ← quản lý catalog động + path
+│   ├── scanner.c             ← đọc directory và đệ quy
+│   ├── ordering.c            ← logic sắp xếp
+│   └── formatter.c           ← long format, permissions, output
+└── tests/
+    └── test.sh               ← bộ kiểm thử nhanh
+```
+
+---
+
+## Biên dịch và chạy
+
+### Trên NetBSD (khuyến nghị)
 
 ```sh
+cd ~/NguyenVanHieu_24IT067_midterm
 make
 make test
 ./new_ls -la
-```
-````
-
-## Optional installation (run without `./`)
-
-Chạy `make install` với đủ quyền hạn; vị trí mặc định là `/usr/local/bin/new_ls`.
-
-```sh
-make
-su
-make install
-exit
-new_ls -la
-
-```
-
-Nếu gặp lỗi `new_ls: not found`, hãy kiểm tra `/usr/local/bin` đã có trong `PATH` chưa. Đối với Bash, chạy `export PATH="/usr/local/bin:$PATH"` trong shell hiện tại. Để cài đặt không cần quyền root vào prefix cá nhân, chạy `make PREFIX="$HOME/.local" install` và thêm `$HOME/.local/bin` vào `PATH`.
-
-Để gỡ bỏ file binary đã cài đặt, sử dụng `make uninstall` với cùng quyền hạn và prefix. **File `/bin/ls` của hệ thống sẽ không bao giờ bị ghi đè.**
-
-## Usage
-
-```text
-new_ls [-AacdFfhiklnqRrSstuw] [file ...]
-
-```
-
-| Option                 | Behavior                                                           |
-| ---------------------- | ------------------------------------------------------------------ |
-| `-a`, `-A`             | Hiển thị dotfiles; `-A` loại trừ `.` và `..`                       |
-| `-c`, `-u`             | Chọn thời gian status-change hoặc thời gian truy cập (access time) |
-| `-d`, `-R`             | Liệt kê bản thân các thư mục hoặc duyệt đệ quy (recurse)           |
-| `-F`                   | Thêm các ký hiệu chỉ thị kiểu file (type indicators)               |
-| `-f`, `-r`, `-S`, `-t` | Không sắp xếp, đảo ngược, sắp xếp theo size hoặc time              |
-| `-h`, `-k`, `-s`       | Dung lượng dễ đọc (human sizes), đơn vị block 1-KiB, số block      |
-| `-i`                   | Hiển thị số inode                                                  |
-| `-l`, `-n`             | Liệt kê chi tiết (long listing), hiển thị user/group dạng số       |
-| `-q`, `-w`             | Thay thế các ký tự không in được hoặc in tên dạng thô (raw)        |
-
-Examples:
-
-```sh
 ./new_ls -A ~
-./new_ls -la /etc
 ./new_ls -R .
 ./new_ls -St /tmp
-./new_ls -- -filename
-
 ```
 
-## Design
+### Cài đặt tùy chọn
 
-| Module             | Responsibility                                                            |
-| ------------------ | ------------------------------------------------------------------------- |
-| `cli_parser.c`     | Phân tích cú pháp `getopt` và xử lý độ ưu tiên của các option             |
-| `file_utils.c`     | Nối đường dẫn (path joins) và quản lý danh mục động an toàn bộ nhớ        |
-| `scanner.c`        | Đọc thư mục, xử lý các operand, duyệt đệ quy                              |
-| `ordering.c`       | Sắp xếp theo filename, size, hoặc timestamp đã chọn                       |
-| `formatter.c`      | Long format, quyền hạn (permissions), blocks, mã hóa/thoát ký tự tên file |
-| `main.c`           | Điều khiển luồng cấp cao nhất và trả về exit status                       |
-| `include/new_ls.h` | Các model và interface dùng chung                                         |
+```sh
+su
+make install          # cài vào /usr/local/bin/new_ls
+exit
 
-Các system call/API quan trọng: `opendir`, `readdir`, `closedir`, `lstat`, `stat`, `readlink`, `getpwuid`, `getgrgid`, `localtime_r`, `strftime`.
-
-## Validation and limitations
-
-Chạy `make test`, sau đó so sánh với bản cài đặt của **NetBSD** bằng cách sử dụng các đường dẫn giống hệt nhau. Chương trình in một mục trên mỗi dòng, phù hợp với sổ tay thu gọn được cung cấp; bố cục cột tương tác (interactive column layout) cố tình không được cài đặt. Khoảng cách chính xác, các quy ước biến môi trường block-size, quy tắc locale/multibyte, và xử lý whiteout có thể khác biệt so với `ls` chính thức của NetBSD. Bộ smoke-test không thể thay thế cho việc kiểm thử toàn diện trên nhiều nền tảng.
-
-Khi xuất bản nội dung này dưới dạng bài tập môn học, sinh viên nên tự chạy các bài test trong VM NetBSD của riêng mình, hiểu rõ bản cài đặt, và ghi lại các quan sát cũng như đóng góp cá nhân.
-
+# Hoặc không cần quyền root
+make PREFIX=$HOME/.local install
+export PATH="$HOME/.local/bin:$PATH"
 ```
 
+Gỡ cài đặt:
+
+```sh
+make uninstall
 ```
+
+---
+
+## Quy trình phát triển trên Windows + máy ảo NetBSD
+
+1. Chỉnh sửa mã nguồn trên Windows bằng VS Code.
+2. Dùng WinSCP để tải các file `.c`, `.h`, `README.md` đã sửa lên máy ảo NetBSD.
+3. Trên NetBSD chạy:
+   ```sh
+   cd ~/NguyenVanHieu_24IT067_midterm
+   make clean
+   make
+   make test
+   ```
+4. Kiểm thử thủ công:
+   ```sh
+   ./new_ls -la /etc
+   ./new_ls -R .
+   ./new_ls -hls ~
+   ```
+
+**Không** chỉnh sửa trực tiếp file nhị phân `new_ls` hoặc các file `.o`.
+
+---
+
+## Kho mã nguồn GitHub
+
+**URL:** https://github.com/YOUR_USERNAME/NguyenVanHieu_24IT067_midterm
+
+(Thay `YOUR_USERNAME` bằng tài khoản GitHub của bạn.)
+
+### Quy trình Git khuyến nghị
+
+```sh
+git status
+git add .
+git commit -m "Fix: enable -A for super-user, whiteout support, setlocale and rewrite README"
+git push origin main
+```
+
+---
+
+## Giới hạn / Khác biệt đã biết
+
+- Không triển khai multi-column interactive layout (man page mặc định in một mục mỗi dòng).
+- Tên tháng và phân loại ký tự phụ thuộc vào locale của hệ thống.
+- Hỗ trợ whiteout chỉ có trên NetBSD; các nền tảng khác sẽ bỏ qua.
+- Khoảng cách chính xác và một số edge case có thể hơi khác so với lệnh `ls` gốc của hệ thống.
+
+---
+
+## Tác giả
+
+Nguyễn Văn Hiếu – MSSV 24IT067  
+Bài tập giữa kỳ môn Lập trình Hệ thống UNIX – 2025/2026

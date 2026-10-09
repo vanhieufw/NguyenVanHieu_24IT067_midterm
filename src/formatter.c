@@ -26,6 +26,9 @@ static char kind(mode_t m) {
     if (S_ISBLK(m)) return 'b';
     if (S_ISFIFO(m)) return 'p';
     if (S_ISSOCK(m)) return 's';
+#ifdef __NetBSD__
+    if (S_ISWHT(m)) return 'w';
+#endif
     return '-';
 }
 static void permissions(mode_t m, char out[11]) {
@@ -66,6 +69,9 @@ static void suffix(mode_t m, const Settings *cfg) {
     else if (S_ISLNK(m)) c = '@';
     else if (S_ISFIFO(m)) c = '|';
     else if (S_ISSOCK(m)) c = '=';
+#ifdef __NetBSD__
+    else if (S_ISWHT(m)) c = '%';
+#endif
     else if (m & (S_IXUSR|S_IXGRP|S_IXOTH)) c = '*';
     if (c) putchar(c);
 }
