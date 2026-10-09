@@ -1,4 +1,4 @@
-git# new_ls
+# new_ls
 
 ### UNIX File Listing Utility · System Programming Midterm
 
